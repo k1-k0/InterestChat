@@ -7,23 +7,13 @@
     <title>{{ username }}'s lobby</title>
 </head>
 <body>
+    {% for room in g.rooms %}
     <div>
-        Love
+        {{ room.name }}
         <form method="POST">
-            <input type="submit" name="love" value="Love"> 
+            <input type="submit" name="room" value="{{ room.name }}"> 
         </form>
     </div>
-    <div>
-        Death
-        <form method="POST">
-            <input type="submit" name="death" value="Death"> 
-        </form>
-    </div>
-    <div>
-        Robots
-        <form method="POST">
-            <input type="submit" name="robots" value="Robots"> 
-        </form>
-    </div>
+    {% endfor %}
 </body>
 </html>

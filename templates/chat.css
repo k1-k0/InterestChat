@@ -1,0 +1,24 @@
+.chat {
+    width: 40%;
+    margin: 3% 33%;
+}
+
+.messages {
+    width: 100%;
+    height: 100%;
+    background-color: skyblue;
+    font-size: 2em;
+}
+
+.text_editing {
+    width: 39%;
+    margin: 2%;
+}
+
+.message_text {
+    width: 100%;
+}
+
+.send_message {
+    width: 100%;
+}
