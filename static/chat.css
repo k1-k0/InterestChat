@@ -6,7 +6,8 @@
 .messages {
     width: 100%;
     height: 100%;
-    background-color: skyblue;
+    list-style-type: none;
+    list-style: none;
     font-size: 2em;
 }
 

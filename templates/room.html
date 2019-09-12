@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="chat.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chat.css') }}">
     <title>{{ room_name }}</title>
 </head>
 <body>
     <div class="chat">
-        <div class="messages">
-            {% for message in g.rooms_messages %}
-            <div class="message">{{ message }}</div>
+        <ul class="messages">
+            {% for message in g.rooms_messages %} 
+            <li class="message">{{ message }}</li>
             {% endfor %}
-        </div>
+        </ul>
         <div class="text_editing">
             <form method="POST">
                 <div class="message_text">
@@ -26,4 +26,10 @@
         </div>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io('http://localhost');
+    alert(socket);
+</script>
 </html>
