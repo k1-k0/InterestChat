@@ -16,10 +16,10 @@
         </ul>
         <div class="text_editing">
             <form method="POST">
-                <div class="message_text">
-                    <input type="text" name="message" value="" placeholder="Enter text message...">
+                <div id="message_text">
+                    <input type="text" id="message" name="message" value="" placeholder="Enter text message...">
                 </div>
-                <div class="send_message">
+                <div id="send_message">
                     <input type="submit" value="send" name="send_message">
                 </div>
             </form>
@@ -27,9 +27,25 @@
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<script src="{{ url_for('static', filename='socket.io.js') }}"></script>
 <script>
-    const socket = io('http://localhost');
-    alert(socket);
+    $(function () {
+        let socket = io();
+
+        // Send message
+        $('form').submit(function(e) {
+            e.preventDefault();
+            socket.emit('chat_message', $('#message').val());
+            $('#message').val('');
+            return false;
+        });
+
+
+        // Processing message
+        socket.on('chat_message', function(message) {
+            $('.messages').append($('<li>').text(message));
+        });
+
+    });
 </script>
 </html>

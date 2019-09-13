@@ -6,9 +6,12 @@
 .messages {
     width: 100%;
     height: 100%;
-    list-style-type: none;
     list-style: none;
     font-size: 2em;
+}
+
+.message {
+    font-family: 'Courier New', Courier, monospace
 }
 
 .text_editing {
@@ -16,10 +19,10 @@
     margin: 2%;
 }
 
-.message_text {
+#message_text {
     width: 100%;
 }
 
-.send_message {
+#send_message {
     width: 100%;
 }

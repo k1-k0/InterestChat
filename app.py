@@ -43,7 +43,7 @@ def lobby():
         return render_template('lobby.html', username=person.username)
 
 
-@app.route('/room/<room_name>', methods=['GET', 'POST'])
+@app.route('/room/<room_name>', methods=['GET'])
 def room(room_name):
     room = None
     for _ in rooms:
@@ -64,16 +64,23 @@ def room(room_name):
             return render_template('room.html', room_name=room_name)
         else:
             return redirect(url_for('lobby'))
-    else:
-        text_message = request.form['message']
-        if text_message:
-            print('User {username} in the "{room}" room say: "{message}"'.format(room=room_name,
-                                                                                 username=person.username,
-                                                                                 message=text_message))
-            room.messages.append(text_message)
-            return render_template("room.html", room_name=room.name)
-        else:
-            print("STUB")
+    # else:
+    #     text_message = request.form['message']
+    #     if text_message:
+    #         print('User {username} in the "{room}" room say: "{message}"'.format(room=room_name,
+    #                                                                              username=person.username,
+    #                                                                              message=text_message))
+    #         room.messages.append(text_message)
+    #         # return render_template("room.html", room_name=room.name)
+    #         return None
+    #     else:
+    #         print("STUB")
+
+
+@socketio.on('chat_message')
+def processing_message(message):
+    print('Receive and broadcast message: ', message)
+    socketio.emit('chat_message', message)
 
 
 if __name__ == "__main__":
