@@ -37,8 +37,11 @@ def lobby():
     g.rooms = rooms
 
     if request.method == 'POST':
-        room_name = request.form['room']
-        return redirect(url_for('room', room_name=room_name))
+        if request.form['join_room']:
+            room_name = request.form['join_room']
+            return redirect(url_for('room', room_name=room_name))
+        elif request.form['create_room']:
+            pass
     else:
         return render_template('lobby.html', username=person.username)
 

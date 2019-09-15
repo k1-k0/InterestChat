@@ -7,13 +7,62 @@
     <title>{{ username }}'s lobby</title>
 </head>
 <body>
+    <div>
+        <form id="creation">
+            <input type="button" id="create_room" name="create_room" value="Create room"> 
+        </form>
+    </div>
+    <h2>
+        Available rooms:
+    </h2>
     {% for room in g.rooms %}
     <div>
         {{ room.name }}
-        <form method="POST">
-            <input type="submit" name="room" value="{{ room.name }}"> 
+        <form method="POST" id="selection">
+            <input type="submit" name="join_room" value="{{ room.name }}"> 
         </form>
     </div>
     {% endfor %}
 </body>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="{{ url_for('static', filename='socket.io.js') }}"></script>
+<script>
+    $(function () {
+        let socket = io();
+
+        $('#create_room').click(function() {
+            $('#create_room').remove();
+
+            $('#creation').append($('<input>', {
+                id: 'room_name',
+                type: 'text',
+                placeholder: 'Enter room name here...'
+            })).append($('<input>', {
+                type: 'submit',
+                id: 'confirm_room',
+                name: 'confirm_room',
+                val: 'Create!'
+            }));
+        });
+
+        $('#creation').submit(function(e) {
+            e.preventDefault();
+            socket.emit('create_room', $('#room_name').val());
+
+            $('#room_name').remove();
+            $('#confirm_room').remove();
+            $('creation').append($('<input>', {
+                type: 'button',
+                id: 'create_room',
+                name: 'create_room',
+                value: 'Create room'
+            }));
+        });
+
+        // Handle new room event
+        socket.on('create_room', function(room) {
+
+        });
+    });
+</script>
 </html>
