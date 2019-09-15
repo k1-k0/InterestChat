@@ -15,14 +15,8 @@
     <h2>
         Available rooms:
     </h2>
-    {% for room in g.rooms %}
-    <div>
-        {{ room.name }}
-        <form method="POST" id="selection">
-            <input type="submit" name="join_room" value="{{ room.name }}"> 
-        </form>
-    </div>
-    {% endfor %}
+    <ul id="rooms">
+    </ul>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script src="{{ url_for('static', filename='socket.io.js') }}"></script>
@@ -51,7 +45,7 @@
 
             $('#room_name').remove();
             $('#confirm_room').remove();
-            $('creation').append($('<input>', {
+            $('#creation').append($('<input>', {
                 type: 'button',
                 id: 'create_room',
                 name: 'create_room',
@@ -59,9 +53,17 @@
             }));
         });
 
-        // Handle new room event
-        socket.on('create_room', function(room) {
-
+        // Handle get rooms event
+        socket.on('get_rooms', function(rooms_names) {
+            console.log(rooms_names);
+            for(let room_name of rooms_names) {
+                $('#rooms').append($('<li>', {
+                    id: 'room' //TODO: Need use <a> tag inner <li> tag
+                })).append($('<a>', {
+                    href: `/room/${room_name}`,
+                    text: `${room_name}`
+                }));
+            }
         });
     });
 </script>

@@ -12,9 +12,9 @@ socketio = SocketIO(app)
 
 person = None
 rooms = [
-    Room('love'),
-    Room('death'),
-    Room('robots')
+    # Room('love'),
+    # Room('death'),
+    # Room('robots')
 ]
 
 @app.route('/')
@@ -32,18 +32,9 @@ def login():
         return render_template('login.html')
 
 
-@app.route('/lobby', methods=['GET', 'POST'])
+@app.route('/lobby')
 def lobby():
-    g.rooms = rooms
-
-    if request.method == 'POST':
-        if request.form['join_room']:
-            room_name = request.form['join_room']
-            return redirect(url_for('room', room_name=room_name))
-        elif request.form['create_room']:
-            pass
-    else:
-        return render_template('lobby.html', username=person.username)
+    return render_template('lobby.html', username=person.username)
 
 
 @app.route('/room/<room_name>', methods=['GET'])
@@ -84,6 +75,18 @@ def room(room_name):
 def processing_message(message):
     print('Receive and broadcast message: ', message)
     socketio.emit('chat_message', message)
+
+
+@socketio.on('create_room')
+def room_creation(room_name):
+    global rooms
+
+    rooms.append(Room(room_name))
+    print('{} room was created'.format(room_name))
+
+    rooms_names = [room.name for room in rooms]
+    socketio.emit('get_rooms', rooms_names)
+
 
 
 if __name__ == "__main__":
