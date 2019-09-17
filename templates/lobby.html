@@ -15,8 +15,13 @@
     <h2>
         Available rooms:
     </h2>
-    <ul id="rooms">
-    </ul>
+    <div id="rooms">
+        {% for room in g.rooms %}
+        <div class="room">
+            <a href="/room/{{ room.name }}">{{ room.name }}</a>
+        </div>
+        {% endfor %}
+    </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script src="{{ url_for('static', filename='socket.io.js') }}"></script>
@@ -40,7 +45,6 @@
         });
 
         $('#creation').submit(function(e) {
-            e.preventDefault();
             socket.emit('create_room', $('#room_name').val());
 
             $('#room_name').remove();
@@ -56,12 +60,14 @@
         // Handle get rooms event
         socket.on('get_rooms', function(rooms_names) {
             console.log(rooms_names);
+            $('#rooms').children().remove();
+
             for(let room_name of rooms_names) {
-                $('#rooms').append($('<li>', {
-                    id: 'room' //TODO: Need use <a> tag inner <li> tag
-                })).append($('<a>', {
+                $('#rooms').append($('<div>', {
+                    class: 'room'
+                })).append($('a', {
                     href: `/room/${room_name}`,
-                    text: `${room_name}`
+                    text: room_name
                 }));
             }
         });

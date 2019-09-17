@@ -34,6 +34,10 @@ def login():
 
 @app.route('/lobby')
 def lobby():
+    global rooms
+    g.rooms = rooms
+
+    print('Total rooms: ', len(rooms))
     return render_template('lobby.html', username=person.username)
 
 
@@ -58,22 +62,14 @@ def room(room_name):
             return render_template('room.html', room_name=room_name)
         else:
             return redirect(url_for('lobby'))
-    # else:
-    #     text_message = request.form['message']
-    #     if text_message:
-    #         print('User {username} in the "{room}" room say: "{message}"'.format(room=room_name,
-    #                                                                              username=person.username,
-    #                                                                              message=text_message))
-    #         room.messages.append(text_message)
-    #         # return render_template("room.html", room_name=room.name)
-    #         return None
-    #     else:
-    #         print("STUB")
 
 
 @socketio.on('chat_message')
 def processing_message(message):
+    global person
+
     print('Receive and broadcast message: ', message)
+    message = '{0}:{1:>20}'.format(person.username, message)
     socketio.emit('chat_message', message)
 
 
@@ -83,9 +79,7 @@ def room_creation(room_name):
 
     rooms.append(Room(room_name))
     print('{} room was created'.format(room_name))
-
-    rooms_names = [room.name for room in rooms]
-    socketio.emit('get_rooms', rooms_names)
+    socketio.emit('get_rooms', [room.name for room in rooms])
 
 
 
