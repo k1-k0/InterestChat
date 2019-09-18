@@ -65,7 +65,7 @@
             for(let room_name of rooms_names) {
                 $('#rooms').append($('<div>', {
                     class: 'room'
-                })).append($('a', {
+                })).append($('<a>', {
                     href: `/room/${room_name}`,
                     text: room_name
                 }));
