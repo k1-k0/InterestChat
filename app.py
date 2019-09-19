@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, g
+from flask import Flask, request, render_template, redirect, url_for, session, g
 
 from flask_socketio import SocketIO
 
@@ -9,13 +9,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'like_secret!'
 socketio = SocketIO(app)
 
-
-person = None
-rooms = [
-    # Room('love'),
-    # Room('death'),
-    # Room('robots')
-]
+rooms = []
 
 @app.route('/')
 def default():
@@ -24,10 +18,16 @@ def default():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        global person # Don't like that!
-        person = User(request.form['username'])
-        print("User {} has been logged".format(person.username))
-        return redirect(url_for('lobby'))
+        username = request.form['username']
+
+        if not username:
+            print('Empty username')
+            return render_template('login.html')
+        else:
+            session['user'] = User(username).toJSON()
+
+            print("User {} has been logged".format(username))
+            return redirect(url_for('lobby'))
     else:
         return render_template('login.html')
 
@@ -37,6 +37,7 @@ def lobby():
     global rooms
     g.rooms = rooms
 
+    person = User.fromJSON(session.get('user'))
     print('Total rooms: ', len(rooms))
     return render_template('lobby.html', username=person.username)
 
@@ -44,6 +45,8 @@ def lobby():
 @app.route('/room/<room_name>', methods=['GET'])
 def room(room_name):
     room = None
+    person = User.fromJSON(session.get('user'))
+
     for _ in rooms:
         if room_name == _.name:
             room = _
@@ -66,10 +69,10 @@ def room(room_name):
 
 @socketio.on('chat_message')
 def processing_message(message):
-    global person
+    person = User.fromJSON(session.get('user'))
 
     print('Receive and broadcast message: ', message)
-    message = '{0}:{1:>20}'.format(person.username, message)
+    message = '{0}: {1}'.format(person.username, message)
     socketio.emit('chat_message', message)
 
 
