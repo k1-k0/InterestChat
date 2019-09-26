@@ -1,4 +1,10 @@
-from flask import Flask, request, render_template, redirect, url_for, session, g
+from flask import Flask
+from flask import request
+from flask import render_template
+from flask import redirect
+from flask import url_for
+from flask import session
+from flask import g
 
 from .entities.user import User
 from .entities.room import Room
@@ -8,10 +14,13 @@ from .constants.methods import POST
 from .constants import session_entity
 from .constants import urls
 
-app = Flask(__name__, template_folder='../templates', static_folder='../static')
+app = Flask(__name__,
+            template_folder='../templates',
+            static_folder='../static')
 app.config['SECRET_KEY'] = 'like_secret!'
 
 rooms = []
+
 
 @app.route('/')
 def default():
@@ -25,7 +34,7 @@ def login():
 
         if not username:
             # TODO: Need using Flash message( Flask built-in )
-            print('Empty username') 
+            print('Empty username')
             return render_template('login.html')
         else:
             session[session_entity.USER] = User(username).toJSON()
@@ -47,7 +56,7 @@ def lobby():
 @app.route('/room/<room_name>', methods=[GET])
 def room(room_name):
     room = None
-    person = User.fromJSON(session.get(session_entity.USER))
+    # person = User.fromJSON(session.get(session_entity.USER))
 
     for _ in rooms:
         if room_name == _.name:
@@ -61,7 +70,6 @@ def room(room_name):
         rooms_name = [room.name for room in rooms]
         if room_name in rooms_name:
             # TODO: Need using Flash message( Flask built-in )
-            message = 'User {} was joined'.format(person.username) 
             return render_template('room.html', room_name=room_name)
         else:
             return redirect(url_for(urls.LOBBY))

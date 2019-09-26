@@ -1,6 +1,7 @@
 import uuid
 import json
 
+
 class User:
     def __init__(self, username, room=None, id=uuid.uuid4().hex):
         self.username = username
@@ -21,7 +22,7 @@ class User:
         })
 
     @staticmethod
-    def fromJSON(user_json): 
+    def fromJSON(user_json):
         user = json.loads(user_json)
         return User(user['username'],
                     user['room'],

@@ -11,6 +11,7 @@ from .constants import session_entity
 
 socketio = SocketIO(app)
 
+
 @socketio.on('chat_message')
 def processing_message(message):
     person = User.fromJSON(session.get(session_entity.USER))
