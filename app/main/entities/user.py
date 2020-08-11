@@ -3,27 +3,23 @@ import json
 
 
 class User:
-    def __init__(self, username, room=None, id=uuid.uuid4().hex):
+    def __init__(self, user_id, username, interests=None):
+        self.id = user_id
         self.username = username
-        self.room = room
-        self.id = id
-
-    def connect(self, room_id):
-        self.room = room_id
-
-    def disconnect(self):
-        self.room = None
+        self.interests = interests or list()
 
     def toJSON(self):
         return json.dumps({
             'id': self.id,
             'username': self.username,
-            'room': self.room
+            'interests': self.interests
         })
 
     @staticmethod
     def fromJSON(user_json):
         user = json.loads(user_json)
-        return User(user['username'],
-                    user['room'],
-                    user['id'])
+        return User(
+            user['id'],
+            user['username'],
+            user['interests']
+        )
