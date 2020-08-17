@@ -1,5 +1,3 @@
-import functools
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
@@ -67,7 +65,7 @@ def login():
 
         if error is None:
             session.clear()
-            session['user'] = user
+            session['user_id'] = str(user.id)
             return redirect(url_for('lobby'))
 
         flash(error)
@@ -76,12 +74,12 @@ def login():
 
 @bp.before_app_request
 def load_logged_in_user():
-    user = session.get('user')
+    user_id = session.get('user_id')
 
-    if user is None:
-        g.user = None
+    if user_id is None:
+        g.user_id = None
     else:
-        g.user = user
+        g.user_id = user_id
 
 @bp.route('/logout')
 def logout():
