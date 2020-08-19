@@ -14,7 +14,7 @@ def load_logged_in_user():
     user_id = session.get('user_id')
 
     if user_id is None:
-        return redirect(url_for('.login'))
+        g.user_id = None
     else:
         g.user_id = user_id
 
@@ -22,7 +22,7 @@ def load_logged_in_user():
 @bp.route('/')
 def default():
     if g.user is None:
-        return redirect(url_for('.login'))
+        return redirect(url_for('auth.login'))
     else:
         return redirect(url_for('main.lobby'))
 
