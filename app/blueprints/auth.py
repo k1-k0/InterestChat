@@ -4,17 +4,28 @@ from flask import (
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from database.models import User
+from ..database.models import User
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+@bp.before_app_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
+
+    if user_id is None:
+        return redirect(url_for('.login'))
+    else:
+        g.user_id = user_id
+
 
 @bp.route('/')
 def default():
     if g.user is None:
         return redirect(url_for('.login'))
     else:
-        return redirect(url_for('lobby'))
+        return redirect(url_for('main.lobby'))
+
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -43,6 +54,7 @@ def register():
 
     return render_template('auth/register.html')
 
+
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -66,20 +78,12 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = str(user.id)
-            return redirect(url_for('lobby'))
+            return redirect(url_for('main.lobby'))
 
         flash(error)
 
     return render_template('auth/login.html')
 
-@bp.before_app_request
-def load_logged_in_user():
-    user_id = session.get('user_id')
-
-    if user_id is None:
-        g.user_id = None
-    else:
-        g.user_id = user_id
 
 @bp.route('/logout')
 def logout():

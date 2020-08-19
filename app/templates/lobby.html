@@ -7,9 +7,21 @@
     <title>{{ username }}'s lobby</title>
 </head>
 <body>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
     <div>
-        <form id="creation">
-            <input type="button" id="create_room" name="create_room" value="Create room"> 
+        <form id="room_creation" method="POST" action="/room/">
+            <input type="text" name="room_name" id="room_name">
+            <input type="submit" id="create_room" name="create_room" value="Create room"> 
         </form>
     </div>
     <h2>
@@ -18,7 +30,7 @@
     <div id="rooms">
         {% for room in g.rooms %}
         <div class="room">
-            <a href="/room/{{ room.name }}">{{ room.name }}</a>
+            <a href="/room/{{ room }}">{{ room }}</a>
         </div>
         {% endfor %}
     </div>
@@ -26,48 +38,17 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script src="{{ url_for('static', filename='socket.io.js') }}"></script>
 <script>
-    $(function () {
-        let socket = io();
-
-        $('#create_room').click(function() {
-            $('#create_room').remove();
-
-            $('#creation').append($('<input>', {
-                id: 'room_name',
-                type: 'text',
-                placeholder: 'Enter room name here...'
-            })).append($('<input>', {
-                type: 'submit',
-                id: 'confirm_room',
-                name: 'confirm_room',
-                val: 'Create!'
-            }));
-        });
-
-        $('#creation').submit(function(e) {
-            socket.emit('create_room', $('#room_name').val());
-
-            $('#room_name').remove();
-            $('#confirm_room').remove();
-            $('#creation').append($('<input>', {
-                type: 'button',
-                id: 'create_room',
-                name: 'create_room',
-                value: 'Create room'
-            }));
-        });
-
+    $(function() {
         // Handle get rooms event
-        socket.on('get_rooms', function(rooms_names) {
-            console.log(rooms_names);
+        socket.on('rooms_update', function(rooms) {
+            console.log(rooms);
             $('#rooms').children().remove();
-
-            for(let room_name of rooms_names) {
+            for(let name of rooms) {
                 $('#rooms').append($('<div>', {
                     class: 'room'
                 })).append($('<a>', {
-                    href: `/room/${room_name}`,
-                    text: room_name
+                    href: `/room/${name}`,
+                    text: name
                 }));
             }
         });
