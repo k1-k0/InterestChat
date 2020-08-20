@@ -1,9 +1,5 @@
-# Anoninch 
+# Interest chat 
 
-## or ANONyomous INterest CHat
-
-Primitive chat which connects two unknown people by chosen interests.
-
-Talk about everything :-)
+Chat application that connects people by chosen interests.
 
 Tools: Python3.8 + Flask + Flask-SocketIO
